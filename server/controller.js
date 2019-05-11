@@ -1,36 +1,23 @@
 module.exports = {
     get: (req, res) => {
         var board = strToBoard(req.query.boardStr) ;
-        console.log(checkMove(Number(req.query.player), board, req.query.row));
+        // console.log(checkMove(Number(req.query.player), board, req.query.row));
         res.send(checkMove(Number(req.query.player), board, req.query.row))
+    },
+    getBoard: (req, res)=> {
+        res.send({serverBoard, serverTurn}); 
     }
 }
 
-var board =
-    [[0,1,0,1,0],
-    [0,1,1],
-    [0,1,0],
-    [1],
+var serverBoard =
+    [[],
     [],
     [],
-    []]
-
-var boardStr = "1001.................101.................."
-//------this is actually for client
-
-var boardToStr = function(board){
-    var result = ''
-    for (var i=0; i<board.length; i++){
-        for  (var k=0; k<6; k++){
-            if (board[i][k]!==undefined){
-                result+=board[i][k];
-            } else {
-                result+='.';
-            }
-        }
-    }
-    return result; 
-}
+    [],
+    [],
+    [],
+    []], serverTurn = 0; 
+// var boardStr = ".........................................."
 
 
 //---------------------------------
@@ -61,7 +48,33 @@ var checkMove = function (player, board, row) {
     // board1[row].push(player);
     if (board1[row].length <= 7) {
         board1[row].push(player);
-        return winnerChecker(player, board1, row) ? `Player ${player} win!` : `Please continue`;
+        serverBoard = board1; 
+        if (board1.every(x=>(x.length===6))){
+            serverBoard = [[],
+            [],
+            [],
+            [],
+            [],
+            [],
+            []];
+            serverTurn = 0;
+        }
+        if (winnerChecker(player, board1, row)){
+            serverBoard = [[],
+            [],
+            [],
+            [],
+            [],
+            [],
+            []];
+            
+            serverTurn = 0;
+            return `Player ${player} win!`;
+        } else {
+            serverTurn = Number(!serverTurn)
+            console.log('serverTurn!', serverTurn)
+            return `Please continue`;
+        }
     } else {
         return 'Please place else where!'
     }
@@ -101,6 +114,6 @@ var winnerChecker = function (player, board, row) {
         else count = 0
         if (count === 4) return true;
     }
-    console.table(board)
+    // console.table(board)
     return false;
 }

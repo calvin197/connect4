@@ -6,7 +6,6 @@ import axios from 'axios';
 class App extends React.Component {
     constructor(props) {
         super(props)
-
         this.state = {
             turn: 0,
             board: [[], [], [], [], [], [], []],
@@ -14,6 +13,23 @@ class App extends React.Component {
         }
         this.onClickHandler = this.onClickHandler.bind(this);
         this.setState = this.setState.bind(this);
+        this.refreshBoard = this.refreshBoard.bind(this); 
+    }
+
+    componentDidMount(){
+        this.refreshBoard(); 
+        setInterval(() => {
+            this.refreshBoard();
+        }, 1000);
+    }
+
+    refreshBoard(){
+        axios.get(`/api/board`)
+        .then(res=>{
+            // console.log(res.data);
+            this.setState({board: res.data.serverBoard, turn: res.data.serverTurn}); 
+        })
+        .catch((err)=>{console.log('error!!!', err)})
     }
 
     onClickHandler(row, turn, board, setState) {

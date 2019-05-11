@@ -17,6 +17,7 @@ app.use(bodyParser.json())
 app.use(morgan('dev'))
 
 app.get('/api', controller.get); 
+app.get('/api/board', controller.getBoard);
 // app.post('/api', controller.post); 
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
